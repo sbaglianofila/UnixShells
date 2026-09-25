@@ -2,14 +2,14 @@
 
 Questa guida fornisce una panoramica pratica sulla gestione delle password e dei segreti in ambiente Linux, con un approfondimento dedicato alle connessioni a database Oracle.
 
-Líobiettivo Ë proteggere credenziali usate da applicazioni, script, servizi `systemd`, processi schedulati e client database, evitando che siano esposte in codice sorgente, file non protetti, riga di comando, log o repository Git.
+L‚Äôobiettivo √® proteggere credenziali usate da applicazioni, script, servizi `systemd`, processi schedulati e client database, evitando che siano esposte in codice sorgente, file non protetti, riga di comando, log o repository Git.
 
 ---
 
 ## Indice
 
 1. [Concetti fondamentali](#concetti-fondamentali)
-2. [Cosa puÚ essere considerato un segreto](#cosa-puÚ-essere-considerato-un-segreto)
+2. [Cosa pu√≤ essere considerato un segreto](#cosa-pu√≤-essere-considerato-un-segreto)
 3. [Dove non conservare password e segreti](#dove-non-conservare-password-e-segreti)
 4. [Strategie disponibili](#strategie-disponibili)
 5. [Scelta della soluzione in base al contesto](#scelta-della-soluzione-in-base-al-contesto)
@@ -28,25 +28,25 @@ Líobiettivo Ë proteggere credenziali usate da applicazioni, script, servizi `sys
 
 # Concetti fondamentali
 
-Una password di connessione non Ë un normale parametro di configurazione: Ë un **segreto**.
+Una password di connessione non √® un normale parametro di configurazione: √® un **segreto**.
 
-Per segreto si intende uníinformazione che, se ottenuta da un soggetto non autorizzato, puÚ consentire accessi indebiti a sistemi, dati, servizi o infrastrutture.
+Per segreto si intende un‚Äôinformazione che, se ottenuta da un soggetto non autorizzato, pu√≤ consentire accessi indebiti a sistemi, dati, servizi o infrastrutture.
 
 La protezione di un segreto deve considerare almeno:
 
 - dove viene salvato;
-- chi puÚ leggerlo;
+- chi pu√≤ leggerlo;
 - come viene fornito al processo applicativo;
-- se puÚ apparire nei log;
-- se puÚ comparire nella lista dei processi;
-- se puÚ essere incluso in backup;
-- se puÚ essere caricato accidentalmente in Git;
+- se pu√≤ apparire nei log;
+- se pu√≤ comparire nella lista dei processi;
+- se pu√≤ essere incluso in backup;
+- se pu√≤ essere caricato accidentalmente in Git;
 - come viene aggiornato o ruotato;
 - cosa accade se viene compromesso.
 
 ---
 
-# Cosa puÚ essere considerato un segreto
+# Cosa pu√≤ essere considerato un segreto
 
 Esempi comuni:
 
@@ -63,13 +63,13 @@ Password LDAP o Active Directory
 Certificati client
 Cookie di sessione
 Stringhe di connessione con password incorporata
-```text
+```
 
 Esempio di stringa di connessione da considerare segreta:
 
 ```text
 postgresql://utente:password@database.example.local:5432/appdb
-```text
+```
 
 Anche se la password non compare esplicitamente, altri dati possono essere sensibili:
 
@@ -77,7 +77,7 @@ Anche se la password non compare esplicitamente, altri dati possono essere sensi
 DB_HOST=db-produzione.interno.example
 DB_NAME=anagrafica_clienti
 DB_USER=app_rw
-```text
+```
 
 ---
 
@@ -91,17 +91,17 @@ Da evitare:
 
 ```python
 db_password = "password-riservata"
-```text
+```
 
 ```java
 String password = "password-riservata";
-```text
+```
 
 ```bash
 DB_PASSWORD="password-riservata"
-```text
+```
 
-Il codice puÚ essere copiato, versionato, inviato via email, incluso in artifact di build o analizzato da persone non autorizzate.
+Il codice pu√≤ essere copiato, versionato, inviato via email, incluso in artifact di build o analizzato da persone non autorizzate.
 
 ---
 
@@ -120,7 +120,7 @@ credentials.json
 wallet.zip
 cwallet.sso
 ewallet.p12
-```text
+```
 
 Inserisci i file sensibili nel `.gitignore`:
 
@@ -133,7 +133,7 @@ credentials/
 wallet/
 *.p12
 *.sso
-```text
+```
 
 Mantieni nel repository soltanto file di esempio privi di password:
 
@@ -141,7 +141,7 @@ Mantieni nel repository soltanto file di esempio privi di password:
 .env.example
 application.properties.example
 database.properties.example
-```text
+```
 
 Esempio:
 
@@ -151,7 +151,7 @@ DB_PORT=1521
 DB_SERVICE_NAME=ORCLPDB1
 DB_USER=app_user
 DB_PASSWORD=INSERIRE_TRAMITE_SECRET_MANAGER
-```text
+```
 
 ---
 
@@ -161,21 +161,21 @@ Da evitare:
 
 ```sh
 sqlplus app_user/password@ORCLPDB1
-```text
+```
 
 Da evitare:
 
 ```sh
 mysql -u app_user -ppassword-riservata
-```text
+```
 
 Da evitare:
 
 ```sh
 comando --db-password=password-riservata
-```text
+```
 
-Una password passata come parametro puÚ comparire in:
+Una password passata come parametro pu√≤ comparire in:
 
 - output di `ps`;
 - strumenti di monitoraggio;
@@ -192,13 +192,13 @@ Da evitare:
 
 ```sh
 chmod 644 /etc/myapp/secrets.conf
-```text
+```
 
 Da evitare:
 
 ```sh
 chmod 777 /etc/myapp
-```text
+```
 
 Un file con password non deve essere leggibile da utenti non autorizzati.
 
@@ -212,15 +212,15 @@ Da evitare nei file utente:
 ~/.bashrc
 ~/.zshrc
 ~/.profile
-```text
+```
 
 Esempio da evitare:
 
 ```sh
 export DB_PASSWORD="password-riservata"
-```text
+```
 
-Questi file possono essere inclusi in backup, sincronizzati nel cloud, caricati in repository di dotfiles o letti durante attivit‡ di assistenza.
+Questi file possono essere inclusi in backup, sincronizzati nel cloud, caricati in repository di dotfiles o letti durante attivit√† di assistenza.
 
 ---
 
@@ -230,13 +230,13 @@ Da evitare:
 
 ```cron
 0 2 * * * /opt/myapp/bin/backup --password=password-riservata
-```text
+```
 
 Da evitare:
 
 ```cron
 0 2 * * * sqlplus app_user/password@ORCLPDB1 @backup.sql
-```text
+```
 
 ---
 
@@ -249,8 +249,8 @@ Le soluzioni principali, in ordine generale di preferenza, sono:
 3. **Wallet o meccanismi nativi del database**
 4. **File protetti da permessi Linux**
 5. **Secret di container o orchestratori**
-6. **Variabili díambiente iniettate a runtime**
-7. **Variabili díambiente statiche in file locali**
+6. **Variabili d‚Äôambiente iniettate a runtime**
+7. **Variabili d‚Äôambiente statiche in file locali**
 
 Le ultime due opzioni possono essere valide in contesti limitati, ma richiedono particolare attenzione.
 
@@ -284,9 +284,9 @@ Esempio:
 Applicazione: myapp
 Utente Unix: myapp
 Gruppo Unix: myapp
-```text
+```
 
-Líutente applicativo dovrebbe:
+L‚Äôutente applicativo dovrebbe:
 
 - non avere privilegi `sudo`;
 - non avere una password interattiva;
@@ -304,7 +304,7 @@ sudo useradd \
     --home-dir /var/lib/myapp \
     --shell /usr/sbin/nologin \
     myapp
-```text
+```
 
 Struttura consigliata:
 
@@ -316,7 +316,7 @@ Struttura consigliata:
 /var/log/myapp/             Log applicativi
 /var/cache/myapp/           Cache
 /run/myapp/                 File runtime, socket e PID
-```text
+```
 
 Esempio di proprietari e permessi:
 
@@ -327,7 +327,7 @@ Esempio di proprietari e permessi:
 /var/lib/myapp/             myapp:myapp    0750
 /var/log/myapp/             myapp:myapp    0750
 /var/cache/myapp/           myapp:myapp    0750
-```text
+```
 
 Creazione pratica:
 
@@ -338,19 +338,19 @@ sudo install -d -m 0755 -o root -g root /opt/myapp
 sudo install -d -m 0750 -o myapp -g myapp /var/lib/myapp
 sudo install -d -m 0750 -o myapp -g myapp /var/log/myapp
 sudo install -d -m 0750 -o myapp -g myapp /var/cache/myapp
-```text
+``
 
 ---
 
 # Gestione con systemd
 
-Per applicazioni eseguite come servizi Linux, `systemd` Ë spesso il punto corretto in cui gestire la configurazione runtime.
+Per applicazioni eseguite come servizi Linux, `systemd` √® spesso il punto corretto in cui gestire la configurazione runtime.
 
 Le variabili non segrete possono essere collocate in:
 
 ```text
 /etc/myapp/environment
-```text
+```
 
 Esempio:
 
@@ -361,14 +361,14 @@ DB_HOST=oracle-db.example.local
 DB_PORT=1521
 DB_SERVICE_NAME=ORCLPDB1
 DB_USER=MYAPP_USER
-```text
+```
 
 Permessi:
 
 ```sh
 sudo chown root:myapp /etc/myapp/environment
 sudo chmod 0640 /etc/myapp/environment
-```text
+```
 
 Nel file di servizio:
 
@@ -380,42 +380,42 @@ Group=myapp
 EnvironmentFile=/etc/myapp/environment
 
 ExecStart=/opt/myapp/bin/myapp
-```text
+```
 
-> Il file `EnvironmentFile=` Ë adatto soprattutto a valori non segreti.  
+> Il file `EnvironmentFile=` √® adatto soprattutto a valori non segreti.  
 > Per password e token, preferisci un wallet, un secret manager o le credenziali gestite da systemd.
 
 ---
 
 ## systemd credentials
 
-`systemd` puÚ fornire credenziali a un processo tramite file temporanei disponibili soltanto durante líesecuzione del servizio.
+`systemd` pu√≤ fornire credenziali a un processo tramite file temporanei disponibili soltanto durante l‚Äôesecuzione del servizio.
 
 Struttura esempio:
 
 ```text
 /etc/myapp/credentials/
 +-- oracle-db-password
-```text
+```
 
 Creazione del file:
 
 ```sh
 sudo nano /etc/myapp/credentials/oracle-db-password
-```text
+```
 
 Contenuto:
 
 ```text
 password-lunga-casuale
-```text
+```
 
 Permessi:
 
 ```sh
 sudo chown root:myapp /etc/myapp/credentials/oracle-db-password
 sudo chmod 0640 /etc/myapp/credentials/oracle-db-password
-```text
+```
 
 Esempio di servizio:
 
@@ -427,27 +427,27 @@ Group=myapp
 LoadCredential=oracle-db-password:/etc/myapp/credentials/oracle-db-password
 
 ExecStart=/opt/myapp/bin/myapp
-```text
+```
 
-Allíinterno del processo, `systemd` espone la directory tramite:
+All‚Äôinterno del processo, `systemd` espone la directory tramite:
 
 ```text
 $CREDENTIALS_DIRECTORY
-```text
+```
 
-Il segreto Ë leggibile nel file:
+Il segreto √® leggibile nel file:
 
 ```text
 $CREDENTIALS_DIRECTORY/oracle-db-password
-```text
+```
 
 Esempio shell:
 
 ```sh
 DB_PASSWORD="$(cat "$CREDENTIALS_DIRECTORY/oracle-db-password")"
-```text
+```
 
-Questo approccio Ë migliore di una normale variabile díambiente, ma líapplicazione deve essere in grado di leggere il segreto da file.
+Questo approccio √® migliore di una normale variabile d‚Äôambiente, ma l‚Äôapplicazione deve essere in grado di leggere il segreto da file.
 
 ---
 
@@ -461,21 +461,21 @@ Da evitare:
 #!/bin/sh
 
 sqlplus app_user/password@ORCLPDB1 @/opt/myapp/sql/backup.sql
-```text
+```
 
 Da evitare:
 
 ```sh
 export DB_PASSWORD="password-riservata"
-```text
+```
 
-Se uno script deve collegarsi a Oracle, Ë preferibile usare Oracle Wallet, illustrato nelle sezioni successive.
+Se uno script deve collegarsi a Oracle, √® preferibile usare Oracle Wallet, illustrato nelle sezioni successive.
 
 Con Cron:
 
 ```cron
 0 2 * * * /opt/myapp/bin/backup-oracle.sh
-```text
+```
 
 Lo script deve recuperare le credenziali da un wallet o da un file protetto, non dalla riga del crontab.
 
@@ -485,18 +485,18 @@ Ricorda che Cron non carica automaticamente:
 ~/.bashrc
 ~/.zshrc
 ~/.profile
-```text
+```
 
 ---
 
 # Gestione delle password per database Oracle
 
-Per Oracle, la soluzione pi˘ adatta per evitare password in chiaro in script e stringhe di connessione Ë in genere **Oracle Wallet**, noto anche come:
+Per Oracle, la soluzione pi√π adatta per evitare password in chiaro in script e stringhe di connessione √® in genere **Oracle Wallet**, noto anche come:
 
 ```text
 Secure External Password Store
 SEPS
-```text
+```
 
 Il wallet permette di memorizzare credenziali Oracle in un archivio protetto e di collegarsi senza specificare esplicitamente utente e password.
 
@@ -504,13 +504,13 @@ Invece di eseguire:
 
 ```sh
 sqlplus MYAPP_USER/password-riservata@ORCLPDB1
-```text
+```
 
 puoi eseguire:
 
 ```sh
 sqlplus /@ORCLPDB1
-```text
+```
 
 dopo aver configurato correttamente wallet e alias di connessione.
 
@@ -523,7 +523,7 @@ dopo aver configurato correttamente wallet e alias di connessione.
 | Oracle Wallet / SEPS | Script, batch, applicazioni e servizi tradizionali |
 | Oracle Wallet con TLS/mTLS | Connessioni cifrate e ambienti Oracle Cloud |
 | Autenticazione esterna | Utenti locali o integrazione enterprise |
-| Kerberos / LDAP / Active Directory | Organizzazioni con identit‡ centralizzata |
+| Kerberos / LDAP / Active Directory | Organizzazioni con identit√† centralizzata |
 | OCI IAM / token | Oracle Cloud e servizi compatibili |
 | Password in file protetto | Soluzione di ripiego |
 | Password in variabile ambiente | Soluzione di ripiego, con limiti |
@@ -532,9 +532,9 @@ dopo aver configurato correttamente wallet e alias di connessione.
 
 # Oracle Wallet e Secure External Password Store
 
-Oracle Wallet Ë un contenitore di credenziali e materiali crittografici.
+Oracle Wallet √® un contenitore di credenziali e materiali crittografici.
 
-PuÚ essere usato per memorizzare:
+Pu√≤ essere usato per memorizzare:
 
 - credenziali di connessione a Oracle Database;
 - certificati;
@@ -542,32 +542,32 @@ PuÚ essere usato per memorizzare:
 - configurazioni TLS;
 - materiali di autenticazione per Oracle Autonomous Database.
 
-Per la gestione delle password database, líobiettivo Ë usare il wallet come **Secure External Password Store**.
+Per la gestione delle password database, l‚Äôobiettivo √® usare il wallet come **Secure External Password Store**.
 
 ---
 
 ## Struttura consigliata
 
-Per uníapplicazione chiamata `myapp`:
+Per un‚Äôapplicazione chiamata `myapp`:
 
 ```text
 /etc/myapp/
 +-- environment
 +-- oracle/
-¶   +-- tnsnames.ora
-¶   +-- sqlnet.ora
+¬¶   +-- tnsnames.ora
+¬¶   +-- sqlnet.ora
 +-- wallet/
     +-- cwallet.sso
     +-- ewallet.p12
-```text
+```
 
-Oppure, se il wallet Ë dedicato al solo client Oracle:
+Oppure, se il wallet √® dedicato al solo client Oracle:
 
 ```text
 /opt/oracle/wallets/myapp/
 +-- cwallet.sso
 +-- ewallet.p12
-```text
+```
 
 Non inserire il wallet nel repository Git.
 
@@ -575,7 +575,7 @@ Non inserire il wallet nel repository Git.
 
 ## Permessi consigliati del wallet
 
-Il wallet deve essere accessibile soltanto allíutente applicativo e agli amministratori autorizzati.
+Il wallet deve essere accessibile soltanto all‚Äôutente applicativo e agli amministratori autorizzati.
 
 Esempio:
 
@@ -583,30 +583,30 @@ Esempio:
 sudo install -d -m 0750 -o root -g myapp /etc/myapp/wallet
 sudo chown root:myapp /etc/myapp/wallet
 sudo chmod 0750 /etc/myapp/wallet
-```text
+```
 
 Per i file del wallet:
 
 ```sh
 sudo chown root:myapp /etc/myapp/wallet/*
 sudo chmod 0640 /etc/myapp/wallet/*
-```text
+```
 
 Verifica:
 
 ```sh
 ls -la /etc/myapp/wallet
-```text
+```
 
 Esempio atteso:
 
 ```text
 -rw-r----- root myapp cwallet.sso
 -rw-r----- root myapp ewallet.p12
-```text
+```
 
-> Un wallet `cwallet.sso` in modalit‡ auto-login consente líaccesso senza richiedere la password del wallet.  
-> Per questo motivo, chi puÚ leggere il file puÚ potenzialmente usare le credenziali in esso contenute. I permessi del filesystem sono fondamentali.
+> Un wallet `cwallet.sso` in modalit√† auto-login consente l‚Äôaccesso senza richiedere la password del wallet.  
+> Per questo motivo, chi pu√≤ leggere il file pu√≤ potenzialmente usare le credenziali in esso contenute. I permessi del filesystem sono fondamentali.
 
 ---
 
@@ -628,13 +628,13 @@ Sono necessari:
 - file `tnsnames.ora`;
 - file `sqlnet.ora`;
 - accesso al database Oracle;
-- utente database dedicato allíapplicazione.
+- utente database dedicato all‚Äôapplicazione.
 
-Verifica la disponibilit‡ del client:
+Verifica la disponibilit√† del client:
 
 ```sh
 sqlplus -version
-```text
+```
 
 ---
 
@@ -644,7 +644,7 @@ File:
 
 ```text
 /etc/myapp/oracle/tnsnames.ora
-```text
+```
 
 Esempio:
 
@@ -660,15 +660,15 @@ ORCLPDB1 =
       (SERVICE_NAME = ORCLPDB1)
     )
   )
-```text
+```
 
 In questo esempio:
 
 ```text
 ORCLPDB1
-```text
+```
 
-Ë líalias di rete usato per raggiungere il database.
+√® l‚Äôalias di rete usato per raggiungere il database.
 
 ---
 
@@ -678,7 +678,7 @@ File:
 
 ```text
 /etc/myapp/oracle/sqlnet.ora
-```text
+```
 
 Esempio:
 
@@ -694,7 +694,7 @@ WALLET_LOCATION =
   )
 
 SQLNET.WALLET_OVERRIDE = TRUE
-```text
+```
 
 Significato:
 
@@ -712,23 +712,23 @@ Puoi impostare:
 
 ```sh
 export TNS_ADMIN="/etc/myapp/oracle"
-```text
+```
 
 In un servizio systemd:
 
 ```ini
 Environment=TNS_ADMIN=/etc/myapp/oracle
-```text
+```
 
 Oppure nel file:
 
 ```text
 /etc/myapp/environment
-```text
+```
 
 ```text
 TNS_ADMIN=/etc/myapp/oracle
-```text
+```
 
 ---
 
@@ -740,7 +740,7 @@ Esempio con `mkstore`:
 
 ```sh
 mkstore -wrl /etc/myapp/wallet -create
-```text
+```
 
 Durante la creazione viene richiesta una password del wallet.
 
@@ -749,7 +749,7 @@ Il comando crea normalmente file come:
 ```text
 ewallet.p12
 cwallet.sso
-```text
+```
 
 > I comandi Oracle e le opzioni disponibili possono cambiare tra versioni di Oracle Client.  
 > Consulta la documentazione della versione utilizzata prima di eseguire procedure in produzione.
@@ -758,13 +758,13 @@ cwallet.sso
 
 ## Aggiungere una credenziale al wallet
 
-Concettualmente, una credenziale Ë associata a:
+Concettualmente, una credenziale √® associata a:
 
 ```text
 alias di connessione
 utente database
 password database
-```text
+```
 
 Esempio:
 
@@ -772,44 +772,44 @@ Esempio:
 ORCLPDB1
 MYAPP_USER
 password-riservata
-```text
+```
 
-Un esempio tipico con `mkstore` Ë:
+Un esempio tipico con `mkstore` √®:
 
 ```sh
 mkstore -wrl /etc/myapp/wallet \
   -createCredential ORCLPDB1 MYAPP_USER password-riservata
-```text
+```
 
 ### Attenzione importante
 
 Il comando precedente mostra la password nella riga di comando.
 
-Questo puÚ esporla tramite:
+Questo pu√≤ esporla tramite:
 
 ```sh
 ps -ef
-```text
+```
 
 oppure tramite cronologia shell, audit o strumenti di monitoraggio.
 
 Per questa ragione:
 
-- esegui queste attivit‡ soltanto in sessioni amministrative controllate;
+- esegui queste attivit√† soltanto in sessioni amministrative controllate;
 - evita terminali condivisi;
 - non salvare il comando in script;
 - non copiarlo in sistemi di ticketing;
 - non inserirlo nella cronologia;
 - valuta procedure di provisioning automatizzate con secret manager;
-- segui le indicazioni della documentazione Oracle della tua versione per metodi di inserimento pi˘ sicuri.
+- segui le indicazioni della documentazione Oracle della tua versione per metodi di inserimento pi√π sicuri.
 
-Dopo aver creato e popolato il wallet, verifica che propriet‡ e permessi siano corretti:
+Dopo aver creato e popolato il wallet, verifica che propriet√† e permessi siano corretti:
 
 ```sh
 sudo chown -R root:myapp /etc/myapp/wallet
 sudo chmod 0750 /etc/myapp/wallet
 sudo chmod 0640 /etc/myapp/wallet/*
-```text
+```
 
 ---
 
@@ -819,16 +819,16 @@ Puoi visualizzare le credenziali memorizzate con un comando simile a:
 
 ```sh
 mkstore -wrl /etc/myapp/wallet -listCredential
-```text
+```
 
-Líoutput dovrebbe mostrare gli alias e gli utenti associati, senza esporre la password.
+L‚Äôoutput dovrebbe mostrare gli alias e gli utenti associati, senza esporre la password.
 
 Esempio concettuale:
 
 ```text
 List credential (index: connect_string username)
 1: ORCLPDB1 MYAPP_USER
-```text
+```
 
 ---
 
@@ -838,16 +838,16 @@ Con wallet, `sqlnet.ora`, `tnsnames.ora` e `TNS_ADMIN` configurati, puoi usare:
 
 ```sh
 sqlplus /@ORCLPDB1
-```text
+```
 
-Oppure in modalit‡ silenziosa:
+Oppure in modalit√† silenziosa:
 
 ```sh
 sqlplus -s /@ORCLPDB1 <<'SQL'
 SELECT SYSDATE FROM dual;
 EXIT;
 SQL
-```text
+```
 
 La password non compare:
 
@@ -864,7 +864,7 @@ File:
 
 ```text
 /opt/myapp/bin/oracle-batch.sh
-```text
+```
 
 Contenuto:
 
@@ -883,49 +883,49 @@ SELECT SYSDATE FROM dual;
 
 EXIT SUCCESS
 SQL
-```text
+```
 
 Permessi:
 
 ```sh
 sudo chown root:myapp /opt/myapp/bin/oracle-batch.sh
 sudo chmod 0750 /opt/myapp/bin/oracle-batch.sh
-```text
+```
 
 Esecuzione come utente applicativo:
 
 ```sh
 sudo -u myapp -- /opt/myapp/bin/oracle-batch.sh
-```text
+```
 
 ---
 
 # Applicazioni Java/JDBC e Oracle Wallet
 
-Uníapplicazione Java puÚ usare Oracle Wallet quando utilizza il driver JDBC Oracle e una configurazione appropriata.
+Un‚Äôapplicazione Java pu√≤ usare Oracle Wallet quando utilizza il driver JDBC Oracle e una configurazione appropriata.
 
-Il principio Ë lo stesso:
+Il principio √® lo stesso:
 
 1. il wallet contiene la credenziale;
 2. il client Oracle conosce la directory del wallet;
-3. líapplicazione usa un alias di connessione;
+3. l‚Äôapplicazione usa un alias di connessione;
 4. utente e password non sono scritti nel codice.
 
 Esempio concettuale di URL JDBC:
 
 ```text
 jdbc:oracle:thin:/@ORCLPDB1
-```text
+```
 
 In questo caso:
 
 ```text
 ORCLPDB1
-```text
+```
 
-Ë líalias definito in `tnsnames.ora`.
+√® l‚Äôalias definito in `tnsnames.ora`.
 
-La configurazione esatta puÚ variare in base a:
+La configurazione esatta pu√≤ variare in base a:
 
 - versione del driver Oracle JDBC;
 - versione del database;
@@ -934,14 +934,14 @@ La configurazione esatta puÚ variare in base a:
 - configurazione `sqlnet.ora`;
 - tipo di autenticazione scelto.
 
-Per uníapplicazione Java, evita configurazioni come:
+Per un‚Äôapplicazione Java, evita configurazioni come:
 
 ```properties
 spring.datasource.username=MYAPP_USER
 spring.datasource.password=password-riservata
-```text
+```
 
-Preferisci, quando supportato, una configurazione che utilizzi il wallet e líalias TNS.
+Preferisci, quando supportato, una configurazione che utilizzi il wallet e l‚Äôalias TNS.
 
 ---
 
@@ -949,7 +949,7 @@ Preferisci, quando supportato, una configurazione che utilizzi il wallet e líali
 
 Oracle Autonomous Database usa normalmente un wallet scaricabile dalla console Oracle Cloud.
 
-Il wallet puÚ includere elementi come:
+Il wallet pu√≤ includere elementi come:
 
 ```text
 tnsnames.ora
@@ -958,7 +958,7 @@ cwallet.sso
 ewallet.p12
 keystore.jks
 truststore.jks
-```text
+```
 
 Questo wallet non va trattato come un file ordinario: contiene materiale sensibile per la connessione al servizio.
 
@@ -968,7 +968,7 @@ Linee guida:
 - non inviarlo via email non protetta;
 - non lasciarlo in directory pubbliche;
 - non renderlo leggibile da tutti;
-- estrailo in una directory accessibile soltanto allíutente applicativo;
+- estrailo in una directory accessibile soltanto all‚Äôutente applicativo;
 - proteggi backup e copie del wallet;
 - segui le indicazioni Oracle Cloud per rotazione o rigenerazione del wallet.
 
@@ -980,7 +980,7 @@ sudo unzip Wallet_MYDB.zip -d /etc/myapp/oracle-wallet
 sudo chown -R root:myapp /etc/myapp/oracle-wallet
 sudo chmod 0750 /etc/myapp/oracle-wallet
 sudo chmod 0640 /etc/myapp/oracle-wallet/*
-```text
+```
 
 ---
 
@@ -991,9 +991,9 @@ Le password devono poter essere cambiate in modo controllato.
 Procedura generale:
 
 1. genera una nuova password casuale;
-2. aggiorna la password dellíutente database;
+2. aggiorna la password dell‚Äôutente database;
 3. aggiorna il wallet o il secret manager;
-4. riavvia o ricarica líapplicazione;
+4. riavvia o ricarica l‚Äôapplicazione;
 5. verifica la connessione;
 6. revoca o rimuovi la password precedente;
 7. controlla i log senza esporre il segreto.
@@ -1003,7 +1003,7 @@ Esempio Oracle:
 ```sql
 ALTER USER MYAPP_USER
 IDENTIFIED BY "NuovaPasswordLungaCasuale";
-```text
+```
 
 Dopo il cambio della password, aggiorna la credenziale nel wallet secondo la procedura prevista dalla versione Oracle utilizzata.
 
@@ -1011,14 +1011,14 @@ Riavvia quindi il servizio:
 
 ```sh
 sudo systemctl restart myapp.service
-```text
+```
 
 Verifica lo stato:
 
 ```sh
 sudo systemctl status myapp.service
 sudo journalctl -u myapp.service -n 100
-```text
+```
 
 ---
 
@@ -1028,14 +1028,14 @@ Puoi generare password casuali su Linux con:
 
 ```sh
 openssl rand -base64 32
-```text
+```
 
 Oppure:
 
 ```sh
 tr -dc 'A-Za-z0-9_@%+=-' < /dev/urandom | head -c 32
 printf '\n'
-```text
+```
 
 Una password efficace dovrebbe essere:
 
@@ -1062,36 +1062,36 @@ Una password efficace dovrebbe essere:
 
 ## Linux
 
-- [ ] Líapplicazione usa un utente Unix dedicato.
-- [ ] Líutente applicativo non dispone di privilegi `sudo`.
-- [ ] Líutente applicativo non puÚ effettuare login SSH diretto.
+- [ ] L‚Äôapplicazione usa un utente Unix dedicato.
+- [ ] L‚Äôutente applicativo non dispone di privilegi `sudo`.
+- [ ] L‚Äôutente applicativo non pu√≤ effettuare login SSH diretto.
 - [ ] Le directory dei segreti hanno permessi restrittivi.
 - [ ] I file dei segreti hanno permessi `0640` o `0600`.
 - [ ] Le directory dei segreti hanno permessi `0750` o `0700`.
 
 ## Oracle
 
-- [ ] Líapplicazione usa un utente Oracle dedicato.
-- [ ] Líutente Oracle non ha privilegi DBA.
+- [ ] L‚Äôapplicazione usa un utente Oracle dedicato.
+- [ ] L‚Äôutente Oracle non ha privilegi DBA.
 - [ ] Sono assegnati soltanto i privilegi minimi necessari.
-- [ ] » configurato Oracle Wallet o Secure External Password Store.
-- [ ] Il wallet non Ë incluso in Git.
-- [ ] Il wallet Ë protetto da permessi Unix.
+- [ ] √à configurato Oracle Wallet o Secure External Password Store.
+- [ ] Il wallet non √® incluso in Git.
+- [ ] Il wallet √® protetto da permessi Unix.
 - [ ] Le connessioni usano TLS quando richiesto.
-- [ ] » definita una procedura di rotazione delle credenziali.
+- [ ] √à definita una procedura di rotazione delle credenziali.
 
 ---
 
 # Riepilogo
 
-Per servizi Linux che si connettono a Oracle Database, una struttura ordinata puÚ essere:
+Per servizi Linux che si connettono a Oracle Database, una struttura ordinata pu√≤ essere:
 
 ```text
 /etc/myapp/
 +-- environment
 +-- oracle/
-¶   +-- sqlnet.ora
-¶   +-- tnsnames.ora
+¬¶   +-- sqlnet.ora
+¬¶   +-- tnsnames.ora
 +-- wallet/
     +-- cwallet.sso
     +-- ewallet.p12
@@ -1102,18 +1102,18 @@ Per servizi Linux che si connettono a Oracle Database, una struttura ordinata pu
 
 /etc/systemd/system/
 +-- myapp.service
-```text
+```
 
-La scelta consigliata per Oracle Ë usare un Oracle Wallet e connettersi tramite alias:
+La scelta consigliata per Oracle √® usare un Oracle Wallet e connettersi tramite alias:
 
 ```sh
 sqlplus /@ORCLPDB1
-```text
+```
 
-anzichÈ usare password in chiaro:
+anzich√© usare password in chiaro:
 
 ```sh
 sqlplus MYAPP_USER/password-riservata@ORCLPDB1
-```text
+```
 
 Questo riduce il rischio di esposizione delle credenziali in script, file Cron, configurazioni applicative, cronologia shell e lista dei processi.
